@@ -45,28 +45,11 @@ GDAL_CONFIG = {
     'GDAL_DISABLE_READDIR_ON_OPEN': 'EMPTY_DIR'
 }
 
-COG_PROFILE = {
-    'count': 1,
-    'driver': 'GTiff',
-    'interleave': 'pixel',
-    'tiled': True,
-    'blockxsize': 400,
-    'blockysize': 400,
-    'photometric': 'MINISBLACK',
-    'ZLEVEL': 1,
-    'ZSTD_LEVEL': 9,
-    'BIGTIFF': 'IF_SAFER'
-}
-
 FLINT_TILE_PROFILE = {
     'count': 1,
     'driver': 'GTiff',
     'interleave': 'pixel',
     'tiled': True,
-    'blockxsize': 400,
-    'blockysize': 400,
-    'width': 4000,
-    'height': 4000,
     'BIGTIFF': 'IF_SAFER'
 }
 
@@ -390,11 +373,6 @@ def optimize_rasters(raster_files: Sequence[Sequence[Path]],
                         )
                         vrt_height, vrt_width = dst_height + 2 * num_pad_pixels, dst_width + 2 * num_pad_pixels
 
-                        # remove padding in output
-                        out_window = windows.Window(
-                            col_off=num_pad_pixels, row_off=num_pad_pixels, width=dst_width, height=dst_height
-                        )
-
                         # construct VRT
                         vrt = es.enter_context(
                             WarpedVRT(
@@ -404,6 +382,8 @@ def optimize_rasters(raster_files: Sequence[Sequence[Path]],
                         )
                         profile = vrt.profile.copy()
                         profile.update(FLINT_TILE_PROFILE)
+                        profile['width'] = dst_width
+                        profile['height'] = dst_height
 
                         in_memory = vrt.width * vrt.height < IN_MEMORY_THRESHOLD
 
@@ -437,14 +417,22 @@ def optimize_rasters(raster_files: Sequence[Sequence[Path]],
 
                         blockedFile = es.enter_context(open(output_file, "wb"))
 
+                        block_width = max(1, round((bounds[2] - bounds[0]) / 10 / dst_res[0]))
+                        block_height = max(1, round((bounds[3] - bounds[1]) / 10 / dst_res[1]))
+
                         # iterate over blocks
-                        block_windows = list(dst.block_windows(1))
-                        for _, w in tqdm.tqdm(block_windows, desc='Processing blocks', **sub_pbar_args):
-                            out_window = windows.Window(col_off=w.col_off+num_pad_pixels, row_off=w.row_off+num_pad_pixels, width=w.width, height=w.height)
-                            block_data = vrt.read(window=out_window, indexes=[1])
-                            dst.write(block_data, window=w)
-                            data = bytes(block_data)  # python 3.n
-                            blockedFile.write(data)
+                        for row in range(0, dst_height, block_height):
+                            for col in range(0, dst_width, block_width):
+                                read_window = windows.Window(col_off=col+num_pad_pixels,
+                                                            row_off=row+num_pad_pixels, width=block_width,
+                                                            height=block_height)
+                                block_data = vrt.read(window=read_window, indexes=[1])
+                                write_window = windows.Window(col_off=col, row_off=row, width=block_width,
+                                                            height=block_height)
+                                dst.write(block_data, window=write_window)
+                                data = bytes(block_data)  # python 3.n
+                                blockedFile.write(data)
+
                         output_file = raster_folder / '{0}_{1}.tif'.format(raster_name, flintdata.flinttile.index(tile))
                         copy(
                             dst, str(output_file), copy_src_overviews=True,

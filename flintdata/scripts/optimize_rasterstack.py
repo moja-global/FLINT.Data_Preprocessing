@@ -51,18 +51,6 @@ GDAL_CONFIG = {
     'GDAL_DISABLE_READDIR_ON_OPEN': 'EMPTY_DIR'
 }
 
-FLINT_TILE_PROFILE = {
-    'count': 1,
-    'driver': 'GTiff',
-    'interleave': 'pixel',
-    'tiled': True,
-    'blockxsize': 400,
-    'blockysize': 400,
-    'width': 4000,
-    'height': 4000,
-    'BIGTIFF': 'IF_SAFER'
-}
-
 Number = TypeVar('Number', int, float)
 
 _TARGET_CRS: str = 'epsg:4326'
