@@ -180,7 +180,7 @@ def _writeLayerInfo(src, layerName, outFld, nLayers=None):
         'tileLonSize': 1.0,
         'blockLatSize': 0.1,
         'blockLonSize': 0.1,
-        'cellLatSize': abs(info['transform'].d),
+        'cellLatSize': abs(info['transform'].e),
         'cellLonSize': info['transform'].a,
         'coordinateSystem': info['crs'],
         'cornerCoordinates': info['bounds'],
