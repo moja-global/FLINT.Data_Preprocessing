@@ -358,7 +358,7 @@ def optimize_rasterstack(raster_pattern: RasterPatternType,
 
                     for row in range(0, dst_height, block_height):
                         for col in range(0, dst_width, block_width):
-                            block = tile_stack[col:col+block_width, row:row+block_height, :]
+                            block = tile_stack[row:row+block_height, col:col+block_width, :]
                             b = bytes(block)  # python 3.n
                             blocked_file.write(b)
 
