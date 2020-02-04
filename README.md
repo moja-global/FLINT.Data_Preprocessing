@@ -1,6 +1,7 @@
 # FLINT.data 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
+## Content of This Repository?
 Python tools to prepare data for the FLINT
 
 To get started run
@@ -8,6 +9,10 @@ To get started run
 $ pip install .
 $ flintdata --help
 ``` 
+
+Information on how FLINT data is prepared can be found in the documentation folder.   
+
+
 
 ## How to Get Involved?  
 
