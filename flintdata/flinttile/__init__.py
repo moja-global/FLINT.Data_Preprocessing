@@ -1,7 +1,6 @@
 """Flint XY tile utilities"""
 
 from collections import namedtuple
-from collections import Sequence
 import math
 
 
