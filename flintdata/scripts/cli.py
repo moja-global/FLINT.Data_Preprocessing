@@ -40,7 +40,6 @@ def entrypoint() -> None:
     try:
         cli(obj={})
     except Exception:
-        import logging
         logger = logging.getLogger(__name__)
         logger.exception('Uncaught exception!', exc_info=True)
         sys.exit(1)
