@@ -5,14 +5,12 @@ from collections import Sequence
 import math
 
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"
 
-__all__ = [
-    'LngLat', 'LngLatBbox', 'Tile', 'bounds',
-    'feature', 'tile', 'tiles', 'ul']
+__all__ = ["LngLat", "LngLatBbox", "Tile", "bounds", "feature", "tile", "tiles", "ul"]
 
 
-Block = namedtuple('Block', ['x', 'y'])
+Block = namedtuple("Block", ["x", "y"])
 """An XY flint block
 Attributes
 ----------
@@ -21,7 +19,7 @@ x, y : int
 """
 
 
-Tile = namedtuple('Tile', ['x', 'y'])
+Tile = namedtuple("Tile", ["x", "y"])
 """An XY flint tile
 
 Attributes
@@ -31,7 +29,7 @@ x, y : int
 """
 
 
-LngLat = namedtuple('LngLat', ['lng', 'lat'])
+LngLat = namedtuple("LngLat", ["lng", "lat"])
 """A longitude and latitude pair
 
 Attributes
@@ -41,7 +39,7 @@ lng, lat : float
 """
 
 
-LngLatBbox = namedtuple('LngLatBbox', ['west', 'south', 'east', 'north'])
+LngLatBbox = namedtuple("LngLatBbox", ["west", "south", "east", "north"])
 """A geographic bounding box
 
 Attributes
@@ -50,6 +48,7 @@ west, south, east, north : float
     Bounding values in decimal degrees.
 """
 
+
 class FlinttileError(Exception):
     """Base exception"""
 
@@ -57,21 +56,28 @@ class FlinttileError(Exception):
 class InvalidLatitudeError(FlinttileError):
     """Raised when math errors occur beyond ~85 degrees N or S"""
 
+
 def name(*tile):
     if len(tile) == 1:
         tile = tile[0]
 
     b = bounds(tile)
 
-    name = "{0}{1:03d}_{2}{3:03d}".format('-' if b.west < 0 else '', abs(int(b.west)),
-                                                   '-' if b.north < 0 else '', abs(int(b.north)))
+    name = "{0}{1:03d}_{2}{3:03d}".format(
+        "-" if b.west < 0 else "",
+        abs(int(b.west)),
+        "-" if b.north < 0 else "",
+        abs(int(b.north)),
+    )
     return name
+
 
 def index(*tile):
     if len(tile) == 1:
         tile = tile[0]
     xtile, ytile = tile
     return ytile * 360 + xtile
+
 
 def ul(*tile):
     """Returns the upper left longitude and latitude of a tile
@@ -96,7 +102,7 @@ def ul(*tile):
         tile = tile[0]
     xtile, ytile = tile
     lon_deg = xtile - 180.0
-    lat_deg = -(ytile -90.0)
+    lat_deg = -(ytile - 90.0)
     return LngLat(lon_deg, lat_deg)
 
 
@@ -150,7 +156,6 @@ def tile(lng, lat):
     return Tile(xtile, ytile)
 
 
-
 def tiles(west, south, east, north):
     """Get the tiles intersecting a geographic bounding box
 
@@ -177,7 +182,6 @@ def tiles(west, south, east, north):
         e = min(180.0, e)
         n = min(90, n)
 
-
         ll = tile(w, s)
         ur = tile(e, n)
 
@@ -190,8 +194,7 @@ def tiles(west, south, east, north):
                 yield Tile(i, j)
 
 
-def feature(
-        tile, fid=None, props=None, buffer=None, precision=None):
+def feature(tile, fid=None, props=None, buffer=None, precision=None):
     """Get the GeoJSON feature corresponding to a tile
 
     Parameters
@@ -220,27 +223,25 @@ def feature(
         north += buffer
     if precision and precision >= 0:
         west, south, east, north = (
-            round(v, precision) for v in (west, south, east, north))
-    bbox = [
-        min(west, east), min(south, north),
-        max(west, east), max(south, north)]
+            round(v, precision) for v in (west, south, east, north)
+        )
+    bbox = [min(west, east), min(south, north), max(west, east), max(south, north)]
     geom = {
-        'type': 'Polygon',
-        'coordinates': [[
-            [west, south],
-            [west, north],
-            [east, north],
-            [east, south],
-            [west, south]]]}
+        "type": "Polygon",
+        "coordinates": [
+            [[west, south], [west, north], [east, north], [east, south], [west, south]]
+        ],
+    }
     xy = index(tile)
     feat = {
-        'type': 'Feature',
-        'bbox': bbox,
-        'id': xy,
-        'geometry': geom,
-        'properties': {'title': 'XY tile %s' % str(tile)}}
+        "type": "Feature",
+        "bbox": bbox,
+        "id": xy,
+        "geometry": geom,
+        "properties": {"title": "XY tile %s" % str(tile)},
+    }
     if props:
-        feat['properties'].update(props)
+        feat["properties"].update(props)
     if fid:
-        feat['id'] = fid
+        feat["id"] = fid
     return feat
