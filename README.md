@@ -1,7 +1,7 @@
 # FLINT.data 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-## Content of This Repository?
+## Content of This Repository:
 Python tools to prepare data for the FLINT
 
 To get started run
@@ -10,7 +10,7 @@ $ pip install .
 $ flintdata --help
 ``` 
 
-Information on how FLINT data is prepared can be found in the documentation folder.   
+Information on how FLINT data is prepared can be found in the [documentation](https://github.com/moja-global/FLINT.Data_Preprocessing/tree/master/Documentation/Preparing%20GCBM-FLINT%20data) folder.   
 
 
 
@@ -48,7 +48,7 @@ The following people are Maintainers Reviewers Ambassadors or Coaches
 
 <table><tr><td align="center"><a href="http://moja.global"><img src="https://avatars1.githubusercontent.com/u/19564969?v=4" width="100px;" alt="moja global"/><br /><sub><b>moja global</b></sub></a><br /><a href="#projectManagement-moja-global" title="Project Management">📆</a></td></tr></table>  
 
-**Maintainers** review and accept proposed changes  
-**Reviewers** check proposed changes before they go to the Maintainers  
-**Ambassadors** are available to provide training related to this repository  
-**Coaches** are available to provide information to new contributors to this repository  
+- **Maintainers** review and accept proposed changes  
+- **Reviewers** check proposed changes before they go to the Maintainers  
+- **Ambassadors** are available to provide training related to this repository  
+- **Coaches** are available to provide information to new contributors to this repository  
